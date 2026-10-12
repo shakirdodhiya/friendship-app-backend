@@ -14,7 +14,13 @@ export const envSchema = z.object({
   DATABASE_URL: z.string().min(1),
 
   /** Firebase project whose ID tokens are accepted. */
-  FIREBASE_PROJECT_ID: z.string().min(1),
+  FIREBASE_PROJECT_ID: z
+    .string()
+    .min(1)
+    .refine(
+      (v) => v !== 'your-firebase-project-id',
+      'replace the placeholder from .env.example with your real Firebase project ID',
+    ),
   /**
    * Service-account credentials. Optional: verifying ID tokens only needs the project id.
    * Needed to delete Firebase users on account deletion and to revoke sessions.
