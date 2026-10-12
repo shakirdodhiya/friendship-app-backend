@@ -34,9 +34,7 @@ export class AuthController {
   async session(@Req() request: Request): Promise<SessionDto> {
     const token = extractBearer(request.headers.authorization);
     if (!token) throw new UnauthorizedException('Missing bearer token');
-    const decoded = await this.firebase.verifyIdToken(token).catch(() => {
-      throw new UnauthorizedException('Invalid or expired Firebase ID token');
-    });
+    const decoded = await this.firebase.verifyIdToken(token);
     const resolved = await this.auth.resolve(decoded);
     return { isNewUser: resolved.isNewUser, user: await this.users.getMe(resolved.id) };
   }

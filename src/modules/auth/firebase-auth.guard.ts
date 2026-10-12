@@ -46,13 +46,7 @@ export class FirebaseAuthGuard implements CanActivate {
 
   /** Verifies a Firebase ID token and returns our user. Shared with the WebSocket gateway. */
   async authenticate(idToken: string): Promise<AuthUser> {
-    let decoded;
-    try {
-      decoded = await this.firebase.verifyIdToken(idToken);
-    } catch (error) {
-      this.logger.debug(`Rejected token: ${(error as Error).message}`);
-      throw new UnauthorizedException('Invalid or expired Firebase ID token');
-    }
+    const decoded = await this.firebase.verifyIdToken(idToken);
 
     const existing = await this.auth.findUser(decoded.uid);
     if (existing?.suspendedAt) throw forbidden('This account has been suspended', ErrorCode.ACCOUNT_SUSPENDED);

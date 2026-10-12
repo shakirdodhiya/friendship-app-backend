@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger, OnModuleDestroy, OnModuleInit, UnauthorizedException } from '@nestjs/common';
 import { App, applicationDefault, cert, deleteApp, initializeApp } from 'firebase-admin/app';
 import { Auth, DecodedIdToken, getAuth } from 'firebase-admin/auth';
 
@@ -44,9 +44,30 @@ export class FirebaseService implements OnModuleInit, OnModuleDestroy {
     await deleteApp(this.app);
   }
 
-  /** Throws when the token is malformed, expired, for another project, or (optionally) revoked. */
-  verifyIdToken(idToken: string): Promise<DecodedIdToken> {
-    return this.auth.verifyIdToken(idToken, this.config.get('FIREBASE_CHECK_REVOKED'));
+  /** 401 for a bad token, 500/503 when the problem is on our side. */
+  async verifyIdToken(idToken: string): Promise<DecodedIdToken> {
+    try {
+      return await this.auth.verifyIdToken(idToken, this.config.get('FIREBASE_CHECK_REVOKED'));
+    } catch (error) {
+      const message = (error as Error).message ?? String(error);
+
+      // valid token, but for another Firebase project: our config doesn't match the app
+      if (/incorrect "(aud|iss)"/.test(message)) {
+        const projectId = this.config.get('FIREBASE_PROJECT_ID');
+        this.logger.error(`Token is for a different project than "${projectId}": ${message}`);
+        throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.INTERNAL, 'Login verification is misconfigured');
+      }
+
+      // couldn't download Google's public keys
+      if (message.includes('Error fetching public keys')) {
+        this.logger.error(`Cannot reach Google to verify tokens: ${message}`);
+        throw new AppException(HttpStatus.SERVICE_UNAVAILABLE, ErrorCode.INTERNAL, 'Login verification is unavailable');
+      }
+
+      // expired, revoked, malformed, bad signature
+      this.logger.debug(`Token rejected: ${message}`);
+      throw new UnauthorizedException('Invalid or expired Firebase ID token');
+    }
   }
 
   /** Signs the user out of every device: their refresh tokens stop working. */
