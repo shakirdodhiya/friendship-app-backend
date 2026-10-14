@@ -7,6 +7,8 @@ export class PersonalityOptionDto {
 
 export class LimitsDto {
   minAge: number;
+  nameMin: number;
+  nameMax: number;
   minInterests: number;
   maxInterests: number;
   shortBioMin: number;

@@ -3,6 +3,9 @@
  * Profile fields are validated against these so the server and the pickers never drift.
  */
 
+// genders people can pick, the DB enum allows more so adding one here needs no migration
+export const GENDERS = ['male', 'female'] as const;
+
 export const LANGUAGES = [
   'Hindi', 'English', 'Marathi', 'Telugu', 'Tamil', 'Kannada', 'Bengali', 'Gujarati', 'Malayalam',
   'Punjabi', 'Spanish', 'French', 'German', 'Japanese', 'Korean', 'Portuguese',
@@ -54,6 +57,7 @@ export const isPremiumAvatarOption = (category: string, index: number) =>
 
 export const PROFILE_LIMITS = {
   minAge: 18,
+  name: { min: 2, max: 50 }, // full name
   minInterests: 5,
   maxInterests: 15,
   shortBio: { min: 50, max: 125 },
