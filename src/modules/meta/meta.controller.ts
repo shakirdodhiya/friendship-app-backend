@@ -7,6 +7,7 @@ import {
   CITIES,
   COUNTRIES,
   DEPARTMENTS,
+  GENDERS,
   INTERESTS,
   isPremiumAvatarOption,
   LANGUAGES,
@@ -18,7 +19,7 @@ import {
 } from '../../common/constants/catalog';
 import { Public } from '../../common/decorators/public.decorator';
 import { AppConfig } from '../../config/app-config.service';
-import { genderEnum, reportReasonEnum } from '../../database/schema';
+import { reportReasonEnum } from '../../database/schema';
 import { AppOptionsDto } from './dto/meta.dto';
 
 @ApiTags('Meta')
@@ -32,7 +33,7 @@ export class MetaController {
   options(): AppOptionsDto {
     const indexes = Array.from({ length: AVATAR_OPTIONS_PER_CATEGORY }, (_, i) => i);
     return {
-      genders: [...genderEnum.enumValues],
+      genders: [...GENDERS],
       languages: [...LANGUAGES],
       zodiacs: [...ZODIACS],
       personalities: PERSONALITIES.map((p) => ({ ...p })),
@@ -52,6 +53,8 @@ export class MetaController {
       },
       limits: {
         minAge: PROFILE_LIMITS.minAge,
+        nameMin: PROFILE_LIMITS.name.min,
+        nameMax: PROFILE_LIMITS.name.max,
         minInterests: PROFILE_LIMITS.minInterests,
         maxInterests: PROFILE_LIMITS.maxInterests,
         shortBioMin: PROFILE_LIMITS.shortBio.min,

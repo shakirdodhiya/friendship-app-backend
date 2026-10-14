@@ -22,6 +22,7 @@ import {
 import { Nullable, Optional } from '../../../common/decorators/optional.decorator';
 import {
   DEPARTMENTS,
+  GENDERS,
   INTERESTS,
   LANGUAGES,
   PERSONALITY_CODES,
@@ -29,7 +30,6 @@ import {
   ROLES,
   ZODIACS,
 } from '../../../common/constants/catalog';
-import { genderEnum } from '../../../database/schema';
 import type { Gender } from '../../../database/schema';
 
 const trim = ({ value }: { value: unknown }) => (typeof value === 'string' ? value.trim() : value);
@@ -42,7 +42,7 @@ export class UpdateProfileDto {
   @Optional()
   @Transform(trim)
   @IsString()
-  @Length(2, 50)
+  @Length(PROFILE_LIMITS.name.min, PROFILE_LIMITS.name.max)
   name?: string;
 
   /** ISO date, `YYYY-MM-DD`. Must be at least 18 years ago. */
@@ -52,11 +52,11 @@ export class UpdateProfileDto {
 
   /** @example "female" */
   @Optional()
-  @IsIn(genderEnum.enumValues)
+  @IsIn(GENDERS)
   gender?: Gender;
 
   @Nullable()
-  @IsIn(genderEnum.enumValues)
+  @IsIn(GENDERS)
   interestedIn?: Gender | null;
 
   @Nullable()
