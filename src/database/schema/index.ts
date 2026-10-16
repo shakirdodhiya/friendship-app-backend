@@ -7,3 +7,4 @@ export * from './quick-matches';
 export * from './billing';
 export * from './community';
 export * from './devices';
+export * from './locations';

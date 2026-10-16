@@ -15,9 +15,11 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx src/database/scripts/migrate.ts",
     "db:seed": "tsx src/database/scripts/seed.ts",
-    "db:reset": "tsx src/database/scripts/reset.ts && npm run db:migrate && npm run db:seed",
+    "db:reset": "tsx src/database/scripts/reset.ts && npm run db:migrate && npm run db:seed && npm run db:seed:locations",
     "db:studio": "drizzle-kit studio",
-    "admin:create": "tsx src/modules/admin/scripts/create-admin.ts"
+    "admin:create": "tsx src/modules/admin/scripts/create-admin.ts",
+    "db:build-locations": "tsx src/database/scripts/build-locations.ts",
+    "db:seed:locations": "tsx src/database/scripts/seed-locations.ts"
   },
   "dependencies": {
     "@nestjs/common": "^12.1.2",

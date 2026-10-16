@@ -12,6 +12,7 @@ import { CommunityModule } from './modules/community/community.module';
 import { DiscoverModule } from './modules/discover/discover.module';
 import { FirebaseModule } from './modules/firebase/firebase.module';
 import { HealthController } from './modules/health/health.controller';
+import { LocationsModule } from './modules/locations/locations.module';
 import { MetaController } from './modules/meta/meta.controller';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { QuickMatchModule } from './modules/quick-match/quick-match.module';
@@ -43,6 +44,7 @@ import { WalletModule } from './modules/wallet/wallet.module';
     WalletModule,
     SubscriptionsModule,
     CommunityModule,
+    LocationsModule,
 
     // Back office
     AdminModule,
