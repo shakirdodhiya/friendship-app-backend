@@ -3,6 +3,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 
 import { AppConfig } from '../../config/app-config.service';
+import { LocationsModule } from '../locations/locations.module';
 import { PeopleModule } from '../people/people.module';
 import { WalletModule } from '../wallet/wallet.module';
 import { UsersController } from './users.controller';
@@ -10,6 +11,7 @@ import { UsersService } from './users.service';
 
 @Module({
   imports: [
+    LocationsModule,
     PeopleModule,
     WalletModule,
     MulterModule.registerAsync({

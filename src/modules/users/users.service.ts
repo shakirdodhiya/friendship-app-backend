@@ -22,6 +22,7 @@ import {
   verificationRequests,
 } from '../../database/schema';
 import { FirebaseService } from '../firebase/firebase.service';
+import { LocationsService } from '../locations/locations.service';
 import { StorageService } from '../storage/storage.service';
 import { WalletLedgerService } from '../wallet/wallet-ledger.service';
 import type { MeDto, PhotoDto } from './dto/me.dto';
@@ -42,6 +43,7 @@ export class UsersService {
     private readonly storage: StorageService,
     private readonly ledger: WalletLedgerService,
     private readonly firebase: FirebaseService,
+    private readonly locations: LocationsService,
   ) {}
 
   /** A live (not deleted) user, or 404. */
@@ -87,10 +89,31 @@ export class UsersService {
 
     // DTO keys map 1:1 onto columns; whitelisting in the ValidationPipe drops anything else.
     const patch: Partial<NewUser> = { ...dto };
+    if (dto.country !== undefined || dto.state !== undefined || dto.city !== undefined) {
+      Object.assign(patch, await this.checkedPlace(userId, dto));
+    }
     if (Object.keys(patch).length > 0) {
       await this.db.update(users).set(patch).where(eq(users.id, userId));
     }
     return this.getMe(userId);
+  }
+
+  /**
+   * Country, state and city are saved together: all empty to clear them, or all three from our
+   * location list. Fields that were not sent keep the saved value. Stores the list's spelling.
+   */
+  private async checkedPlace(userId: string, dto: UpdateProfileDto) {
+    const current = await this.findActive(userId);
+    const country = (dto.country !== undefined ? dto.country : current.country) || null;
+    const state = (dto.state !== undefined ? dto.state : current.state) || null;
+    const city = (dto.city !== undefined ? dto.city : current.city) || null;
+
+    if (!country && !state && !city) return { country: null, state: null, city: null };
+    if (!country || !state || !city) throw badRequest('Send country, state and city together');
+
+    const place = await this.locations.resolve(country, state, city);
+    if (!place) throw badRequest('That country, state and city combination is not in our list');
+    return place;
   }
 
   async completeOnboarding(userId: string): Promise<MeDto> {

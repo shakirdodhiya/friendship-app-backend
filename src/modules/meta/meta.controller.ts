@@ -4,8 +4,6 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   AVATAR_CATEGORIES,
   AVATAR_OPTIONS_PER_CATEGORY,
-  CITIES,
-  COUNTRIES,
   DEPARTMENTS,
   GENDERS,
   INTERESTS,
@@ -14,7 +12,6 @@ import {
   PERSONALITIES,
   PROFILE_LIMITS,
   ROLES,
-  STATES,
   ZODIACS,
 } from '../../common/constants/catalog';
 import { Public } from '../../common/decorators/public.decorator';
@@ -25,7 +22,7 @@ import { AppOptionsDto } from './dto/meta.dto';
 @ApiTags('Meta')
 @Controller('meta')
 export class MetaController {
-  constructor(private readonly config: AppConfig) {}
+  constructor(private readonly config: AppConfig) { }
 
   @Public()
   @Get('options')
@@ -40,9 +37,6 @@ export class MetaController {
       roles: [...ROLES],
       departments: [...DEPARTMENTS],
       interests: [...INTERESTS],
-      countries: [...COUNTRIES],
-      states: [...STATES],
-      cities: [...CITIES],
       reportReasons: [...reportReasonEnum.enumValues],
       avatar: {
         categories: [...AVATAR_CATEGORIES],
