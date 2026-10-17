@@ -44,9 +44,6 @@ export class AppOptionsDto {
   roles: string[];
   departments: string[];
   interests: string[];
-  countries: string[];
-  states: string[];
-  cities: string[];
   reportReasons: string[];
   avatar: AvatarCatalogDto;
   limits: LimitsDto;

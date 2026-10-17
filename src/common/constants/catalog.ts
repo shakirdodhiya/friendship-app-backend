@@ -75,8 +75,3 @@ export const PRESENCE = {
   /** Distance of the "Nearby" filter. */
   nearbyKm: 15,
 } as const;
-
-/** Place-of-stay pickers on the onboarding "place" step. */
-export const COUNTRIES = ['India', 'Sweden', 'Germany', 'France', 'Japan', 'South Korea', 'Portugal', 'United States'] as const;
-export const STATES = ['Maharashtra', 'Karnataka', 'Delhi', 'Kerala', 'Tamil Nadu', 'Gujarat', 'Punjab', 'West Bengal'] as const;
-export const CITIES = ['Mumbai', 'Pune', 'Bengaluru', 'New Delhi', 'Kochi', 'Chennai', 'Ahmedabad', 'Kolkata'] as const;

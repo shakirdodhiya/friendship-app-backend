@@ -83,6 +83,28 @@ export class LocationsService {
     return { ...row, distanceKm: Math.round(row.distanceKm * 10) / 10 };
   }
 
+  /**
+   * Canonical names when this country, state and city exist together, otherwise null.
+   * The country can be a code or a name, everything is matched in any letter case.
+   */
+  async resolve(country: string, state: string, city: string) {
+    const value = country.trim();
+    const [row] = await this.db
+      .select({ country: countries.name, state: states.name, city: cities.name })
+      .from(cities)
+      .innerJoin(states, eq(states.id, cities.stateId))
+      .innerJoin(countries, eq(countries.id, states.countryId))
+      .where(
+        and(
+          or(eq(countries.code, value.toUpperCase()), sql`lower(${countries.name}) = ${value.toLowerCase()}`),
+          sql`lower(${states.name}) = ${state.trim().toLowerCase()}`,
+          sql`lower(${cities.name}) = ${city.trim().toLowerCase()}`,
+        ),
+      )
+      .limit(1);
+    return row ?? null;
+  }
+
   /** The profile stores names, so accept the code or the name in any case. */
   private async findCountry(input: string) {
     const value = input.trim();
